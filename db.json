@@ -1,0 +1,39 @@
+{
+  "logs": [
+    {
+      "date": "2025-12-04",
+      "title": "Got data science certificate",
+      "description": "bbb",
+      "imageUrl": "",
+      "tags": [],
+      "id": "1764859558149",
+      "timestamp": "2025-12-04T14:45:58.149Z"
+    },
+    {
+      "title": "Got data science certificate",
+      "description": "took me two days\n",
+      "imageUrl": "",
+      "tags": [],
+      "id": "1764859862347",
+      "timestamp": "2025-12-04T14:51:02.347Z"
+    },
+    {
+      "date": "2025-12-11",
+      "title": "got a data science certificate",
+      "description": "Took me two trice but finally did it\n",
+      "imageUrl": "",
+      "tags": [],
+      "id": "1765418921496",
+      "timestamp": "2025-12-11T02:08:41.496Z"
+    },
+    {
+      "date": "2025-12-09",
+      "title": "AI tecch event",
+      "description": "attended an event hosted by windsurf at jkuat",
+      "imageUrl": "",
+      "tags": [],
+      "id": "1765422951186",
+      "timestamp": "2025-12-11T03:15:51.186Z"
+    }
+  ]
+}

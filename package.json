@@ -1,0 +1,11 @@
+{
+  "name": "career-compass-mvp",
+  "version": "1.0.0",
+  "description": "A simple career logging application.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

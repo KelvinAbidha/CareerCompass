@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated Post - Career Compass MVP</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .dark {
+            background-color: #1a202c;
+            color: #cbd5e0;
+        }
+        .dark .bg-white {
+            background-color: #2d3748;
+        }
+        .dark .text-gray-800 {
+            color: #e2e8f0;
+        }
+        .dark .text-gray-600 {
+            color: #a0aec0;
+        }
+        .dark .border-gray-300 {
+            border-color: #4a5568;
+        }
+        .dark .shadow-md {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <header class="bg-white shadow">
+        <div class="container mx-auto p-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-blue-500">Career Compass</h1>
+            <nav class="flex items-center">
+                <a href="index.html" class="text-gray-600 hover:text-blue-500 mr-4">Home</a>
+                <button id="dark-mode-toggle" class="text-gray-600 hover:text-blue-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container mx-auto p-4">
+        <a href="index.html" class="text-blue-500 hover:underline">&larr; Back to Home</a>
+        <h1 class="text-2xl font-bold mt-4">This Week's Activities</h1>
+        <button id="generate-post-btn" class="bg-green-500 text-white p-2 rounded hover:bg-green-600 mt-4">Generate Post</button>
+        <div id="post-container" class="mt-8">
+            <!-- Post will be rendered here -->
+        </div>
+        <div class="mt-8">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-bold">Generated Post</h2>
+                <button id="copy-to-clipboard-btn" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 flex items-center">
+                    <i data-lucide="copy" class="w-4 h-4 mr-2"></i>
+                    Copy to Clipboard
+                </button>
+            </div>
+            <div id="loading-spinner" class="hidden animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mx-auto mt-4"></div>
+            <pre id="generated-post" class="bg-gray-200 p-4 rounded mt-4"></pre>
+        </div>
+    </div>
+
+    <footer class="bg-white shadow mt-8">
+        <div class="container mx-auto p-4 text-center text-gray-600">
+            &copy; 2025 Career Compass. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="generate-post.js" type="module"></script>
+    <script>
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const body = document.body;
+
+        // Check for saved theme preference
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark');
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark');
+
+            // Save theme preference
+            if (body.classList.contains('dark')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.removeItem('theme');
+            }
+        });
+    </script>
+</body>
+</html>
