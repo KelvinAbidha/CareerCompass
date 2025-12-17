@@ -36,6 +36,7 @@ const clearFiltersBtn = document.getElementById('clear-filters-btn');
 const filterByTag = document.getElementById('filter-by-tag');
 const prevPageBtn = document.getElementById('prev-page-btn');
 const nextPageBtn = document.getElementById('next-page-btn');
+const heatmap = document.getElementById('heatmap');
 
 let currentPage = 1;
 const logsPerPage = 5;
@@ -43,6 +44,7 @@ const logsPerPage = 5;
 // Fetch initial data
 document.addEventListener('DOMContentLoaded', () => {
     fetchLogs();
+    logDate.valueAsDate = new Date();
 });
 
 
@@ -55,6 +57,7 @@ async function fetchLogs() {
         logs = await response.json();
         console.log("Logs loaded:", logs);
         renderWeeklyActivities(logs);
+        renderHeatmap(logs);
     } catch (error) {
         console.error("Failed to fetch logs:", error);
         alert("Failed to load logs. Is the server running? Please check the console for more details.");
@@ -133,34 +136,53 @@ function renderWeeklyActivities(logsToRender, sortByValue, startDateValue, endDa
         weeklyActivities.sort((a, b) => a.title.localeCompare(b.title));
     }
 
+    logsList.innerHTML = '';
+    if(weeklyActivities.length === 0) {
+        logsList.innerHTML = `
+            <div class="text-center py-12 col-span-full">
+                <svg class="mx-auto h-24 w-24 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 class="mt-2 text-lg font-medium text-slate-900 dark:text-white">No logs found</h3>
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Get started by logging your first activity.</p>
+            </div>
+        `;
+        return;
+    }
+
     const indexOfLastLog = currentPage * logsPerPage;
     const indexOfFirstLog = indexOfLastLog - logsPerPage;
     const currentLogs = weeklyActivities.slice(indexOfFirstLog, indexOfLastLog);
 
-    logsList.innerHTML = '';
+    
     currentLogs.forEach(log => {
         const logElement = document.createElement('div');
-        logElement.classList.add('p-6', 'mb-4', 'bg-white', 'rounded-lg', 'shadow-md', 'hover:shadow-lg', 'transition-shadow', 'duration-200');
+        logElement.classList.add('break-inside-avoid', 'mb-8');
         logElement.setAttribute('data-id', log.id);
 
         const description = log.description;
         const shortDescription = description.length > 100 ? `${description.substring(0, 100)}...` : description;
 
         logElement.innerHTML = `
-            <div class="flex justify-between">
-                <h3 class="text-lg font-bold">${log.title}</h3>
-                <div>
-                    <button class="copy-log-btn text-green-500 hover:underline mr-2" data-id="${log.id}">Copy</button>
-                    <button class="edit-log-btn text-blue-500 hover:underline mr-2" data-id="${log.id}">Edit</button>
-                    <button class="delete-log-btn text-red-500 hover:underline" data-id="${log.id}">Delete</button>
+            <div class="group relative block w-full bg-white/30 dark:bg-slate-800/30 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 overflow-hidden">
+                <div class="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center">
+                    <button class="edit-log-btn text-slate-600 dark:text-slate-300 bg-white/50 dark:bg-slate-700/50 backdrop-blur-md rounded-full p-2 leading-none hover:scale-110 transition-transform" data-id="${log.id}">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z" /></svg>
+                    </button>
+                    <button class="delete-log-btn text-slate-600 dark:text-slate-300 bg-white/50 dark:bg-slate-700/50 backdrop-blur-md rounded-full p-2 leading-none hover:scale-110 transition-transform ml-1" data-id="${log.id}">
+                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
                 </div>
-            </div>
-            <p class="text-gray-600">${log.timestamp ? new Date(log.timestamp).toLocaleDateString() : 'Date not available'}</p>
-            <p class="mt-2" data-full-description="${description}">${shortDescription}</p>
-            ${description.length > 100 ? '<button class="show-more-btn text-blue-500 hover:underline">Show more</button>' : ''}
-            ${log.imageUrl ? `<img src="${log.imageUrl}" class="mt-2 max-w-full rounded">` : ''}
-            <div class="mt-4">
-                ${log.tags ? log.tags.map(tag => `<button class="tag-btn bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm hover:bg-gray-300">${tag}</button>`).join('') : ''}
+                ${log.imageUrl ? `<img src="${log.imageUrl}" class="w-full h-auto object-cover">` : ''}
+                <div class="p-5">
+                    <h3 class="font-bold text-lg text-slate-900 dark:text-white">${log.title}</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-2">${log.timestamp ? new Date(log.timestamp).toLocaleDateString() : 'Date not available'}</p>
+                    <p class="text-slate-700 dark:text-slate-300 leading-relaxed">${shortDescription}</p>
+                    ${description.length > 100 ? '<button class="show-more-btn text-indigo-500 dark:text-indigo-400 hover:underline text-sm font-semibold mt-2">Show more</button>' : ''}
+                    <div class="mt-4 flex flex-wrap">
+                        ${log.tags ? log.tags.map(tag => `<span class="${getTagColor(tag)} text-xs font-medium mr-2 mb-2 px-2.5 py-1 rounded-full">${tag}</span>`).join('') : ''}
+                    </div>
+                </div>
             </div>
         `;
         logsList.appendChild(logElement);
@@ -174,6 +196,20 @@ function renderWeeklyActivities(logsToRender, sortByValue, startDateValue, endDa
     // Update pagination buttons
     prevPageBtn.disabled = currentPage === 1;
     nextPageBtn.disabled = indexOfLastLog >= weeklyActivities.length;
+}
+
+function getTagColor(tag) {
+    const colors = [
+        'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
+        'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300',
+        'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
+        'bg-pink-100 text-pink-800 dark:bg-pink-900/50 dark:text-pink-300',
+        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300',
+        'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300',
+    ];
+    // simple hash to get a color
+    const hash = tag.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
+    return colors[hash % colors.length];
 }
 
 prevPageBtn.addEventListener('click', () => {
@@ -366,3 +402,57 @@ async function saveLog(log) {
 
 // Career Compass App
 console.log("Career Compass App Loaded (Local API)");
+
+function renderHeatmap(logs) {
+    const contributions = new Map();
+    logs.forEach(log => {
+        if (log.timestamp) {
+            const date = new Date(log.timestamp).toISOString().split('T')[0];
+            contributions.set(date, (contributions.get(date) || 0) + 1);
+        }
+    });
+
+    heatmap.innerHTML = '';
+
+    if(logs.length === 0) {
+        heatmap.innerHTML = `
+            <div class="text-center py-8">
+                <svg class="mx-auto h-16 w-16 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h3 class="mt-2 text-lg font-medium text-slate-900 dark:text-white">No activity yet</h3>
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Your contributions will appear here.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const today = new Date();
+    const heatmapDays = 90;
+    
+    const grid = document.createElement('div');
+    grid.classList.add('grid', 'grid-flow-col', 'grid-rows-7', 'gap-1.5');
+
+    for (let i = heatmapDays - 1; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        const dateString = date.toISOString().split('T')[0];
+        const count = contributions.get(dateString) || 0;
+
+        const cell = document.createElement('div');
+        cell.classList.add('w-5', 'h-5', 'rounded');
+        cell.style.backgroundColor = getColor(count);
+        cell.title = `${count} contributions on ${date.toLocaleDateString()}`;
+        grid.appendChild(cell);
+    }
+    heatmap.appendChild(grid);
+}
+
+function getColor(count) {
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    if (count === 0) return isDarkMode ? 'rgb(30 41 59 / 0.5)' : 'rgb(241 245 249 / 0.5)';
+    if (count < 2) return '#a5b4fc'; // indigo-300
+    if (count < 4) return '#818cf8'; // indigo-400
+    if (count < 6) return '#6366f1'; // indigo-500
+    return '#4f46e5'; // indigo-600
+}

@@ -6,35 +6,31 @@
     <title>Generated Post - Career Compass MVP</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .dark {
-            background-color: #1a202c;
-            color: #cbd5e0;
-        }
-        .dark .bg-white {
-            background-color: #2d3748;
-        }
-        .dark .text-gray-800 {
-            color: #e2e8f0;
-        }
-        .dark .text-gray-600 {
-            color: #a0aec0;
-        }
-        .dark .border-gray-300 {
-            border-color: #4a5568;
-        }
-        .dark .shadow-md {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        body {
+            font-family: 'Inter', sans-serif;
         }
     </style>
+    <script>
+        // It's best to inline this script to prevent FOUC (Flash of Unstyled Content)
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
 </head>
-<body class="bg-gray-100 text-gray-800">
-    <header class="bg-white shadow">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
+    <div class="fixed top-0 left-0 w-full h-full bg-slate-50 dark:bg-[#0B1120] -z-10" style="background-image: radial-gradient(circle at 1px 1px, #cbd5e1 1px, transparent 0); background-size: 2rem 2rem;"></div>
+    <header class="bg-white/70 dark:bg-slate-800/70 backdrop-blur-md shadow-sm sticky top-0 z-10">
         <div class="container mx-auto p-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-blue-500">Career Compass</h1>
+            <h1 class="text-2xl font-bold text-indigo-500 dark:text-indigo-400">Career Compass</h1>
             <nav class="flex items-center">
-                <a href="index.html" class="text-gray-600 hover:text-blue-500 mr-4">Home</a>
-                <button id="dark-mode-toggle" class="text-gray-600 hover:text-blue-500">
+                <a href="index.html" class="text-slate-600 dark:text-slate-300 hover:text-indigo-500 dark:hover:text-indigo-400 mr-4">Home</a>
+                <button id="dark-mode-toggle" class="text-slate-600 dark:text-slate-300 hover:text-indigo-500 dark:hover:text-indigo-400">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                     </svg>
@@ -44,49 +40,69 @@
     </header>
 
     <div class="container mx-auto p-4">
-        <a href="index.html" class="text-blue-500 hover:underline">&larr; Back to Home</a>
-        <h1 class="text-2xl font-bold mt-4">This Week's Activities</h1>
-        <button id="generate-post-btn" class="bg-green-500 text-white p-2 rounded hover:bg-green-600 mt-4">Generate Post</button>
-        <div id="post-container" class="mt-8">
-            <!-- Post will be rendered here -->
-        </div>
+        <a href="index.html" class="text-indigo-500 dark:text-indigo-400 hover:underline font-medium">&larr; Back to Dashboard</a>
         <div class="mt-8">
-            <div class="flex justify-between items-center">
-                <h2 class="text-xl font-bold">Generated Post</h2>
-                <button id="copy-to-clipboard-btn" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 flex items-center">
-                    <i data-lucide="copy" class="w-4 h-4 mr-2"></i>
-                    Copy to Clipboard
+            <div class="bg-white/30 dark:bg-slate-800/30 backdrop-blur-md p-8 rounded-2xl shadow-lg border border-white/20">
+                <h1 class="text-3xl font-bold mb-6 text-slate-900 dark:text-white">Generate Social Media Post</h1>
+                <div class="flex items-center space-x-4 mb-6">
+                    <label for="platform-linkedin" class="flex items-center cursor-pointer text-lg">
+                        <input type="radio" id="platform-linkedin" name="platform" value="linkedin" class="form-radio text-indigo-500 dark:text-indigo-400 h-5 w-5" checked>
+                        <span class="ml-2">LinkedIn</span>
+                    </label>
+                    <label for="platform-twitter" class="flex items-center cursor-pointer text-lg">
+                        <input type="radio" id="platform-twitter" name="platform" value="twitter" class="form-radio text-indigo-500 dark:text-indigo-400 h-5 w-5">
+                        <span class="ml-2">Twitter/X</span>
+                    </label>
+                </div>
+                <button id="generate-post-btn" class="w-full bg-gradient-to-r from-green-400 to-emerald-600 text-white font-bold p-4 rounded-lg shadow-lg hover:shadow-emerald-500/50 transform hover:scale-105 transition-all">
+                    Generate Post
                 </button>
             </div>
-            <div id="loading-spinner" class="hidden animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mx-auto mt-4"></div>
-            <pre id="generated-post" class="bg-gray-200 p-4 rounded mt-4"></pre>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">This Week's Activities</h2>
+                <div id="post-container" class="space-y-6">
+                    <!-- Post will be rendered here -->
+                </div>
+            </div>
+            <div>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Generated Post Preview</h2>
+                    <button id="copy-to-clipboard-btn" class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 flex items-center font-semibold">
+                        <i data-lucide="copy" class="w-4 h-4 mr-2"></i>
+                        Copy
+                    </button>
+                </div>
+                <div id="loading-spinner" class="hidden animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto mt-12"></div>
+                <div id="post-preview" class="bg-white/30 dark:bg-slate-800/30 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-white/20 min-h-[200px]">
+                    <!-- Post preview will be rendered here -->
+                </div>
+                <pre id="generated-post" class="hidden"></pre>
+            </div>
         </div>
     </div>
 
-    <footer class="bg-white shadow mt-8">
-        <div class="container mx-auto p-4 text-center text-gray-600">
+    <footer class="bg-transparent mt-12">
+        <div class="container mx-auto p-4 text-center text-slate-500 dark:text-slate-400">
             &copy; 2025 Career Compass. All rights reserved.
         </div>
     </footer>
 
     <script src="generate-post.js" type="module"></script>
     <script>
+        lucide.createIcons();
         const darkModeToggle = document.getElementById('dark-mode-toggle');
-        const body = document.body;
-
-        // Check for saved theme preference
-        if (localStorage.getItem('theme') === 'dark') {
-            body.classList.add('dark');
-        }
+        const htmlEl = document.documentElement;
 
         darkModeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark');
-
-            // Save theme preference
-            if (body.classList.contains('dark')) {
-                localStorage.setItem('theme', 'dark');
+            if (htmlEl.classList.contains('dark')) {
+                htmlEl.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
             } else {
-                localStorage.removeItem('theme');
+                htmlEl.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
             }
         });
     </script>
