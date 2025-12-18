@@ -54,6 +54,49 @@
                         <span class="ml-2">Twitter/X</span>
                     </label>
                 </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label for="tone-selector" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tone</label>
+                        <select id="tone-selector" class="w-full bg-white/50 dark:bg-slate-700/50 border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm p-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <option>Professional</option>
+                            <option>Enthusiastic</option>
+                            <option>Casual</option>
+                            <option>Humorous</option>
+                            <option>Humble-brag</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Length</label>
+                        <div id="length-toggles" class="flex w-full rounded-lg bg-slate-200 dark:bg-slate-700 p-1">
+                            <label class="w-full text-center">
+                                <input type="radio" name="length" value="Short" class="hidden peer" checked>
+                                <span class="block cursor-pointer rounded-md p-1.5 text-sm font-medium text-slate-600 dark:text-slate-300 peer-checked:bg-white dark:peer-checked:bg-slate-800 peer-checked:shadow">Short</span>
+                            </label>
+                            <label class="w-full text-center">
+                                <input type="radio" name="length" value="Medium" class="hidden peer">
+                                <span class="block cursor-pointer rounded-md p-1.5 text-sm font-medium text-slate-600 dark:text-slate-300 peer-checked:bg-white dark:peer-checked:bg-slate-800 peer-checked:shadow">Medium</span>
+                            </label>
+                            <label class="w-full text-center">
+                                <input type="radio" name="length" value="Long" class="hidden peer">
+                                <span class="block cursor-pointer rounded-md p-1.5 text-sm font-medium text-slate-600 dark:text-slate-300 peer-checked:bg-white dark:peer-checked:bg-slate-800 peer-checked:shadow">Long</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="emoji-density" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Emoji Density</label>
+                    <input id="emoji-density" type="range" min="0" max="100" value="30" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700">
+                </div>
+
+                <div class="mb-8">
+                    <label for="cta-toggle" class="flex items-center cursor-pointer">
+                        <input id="cta-toggle" type="checkbox" class="form-checkbox h-5 w-5 text-indigo-500 dark:text-indigo-400 rounded-md bg-white/50 dark:bg-slate-700/50 border-slate-300 dark:border-slate-600 focus:ring-indigo-500">
+                        <span class="ml-3 text-sm font-medium text-slate-700 dark:text-slate-300">Include a Call-to-Action (e.g., a question)</span>
+                    </label>
+                </div>
+
                 <button id="generate-post-btn" class="w-full bg-gradient-to-r from-green-400 to-emerald-600 text-white font-bold p-4 rounded-lg shadow-lg hover:shadow-emerald-500/50 transform hover:scale-105 transition-all">
                     Generate Post
                 </button>
@@ -76,10 +119,21 @@
                     </button>
                 </div>
                 <div id="loading-spinner" class="hidden animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mx-auto mt-12"></div>
-                <div id="post-preview" class="bg-white/30 dark:bg-slate-800/30 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-white/20 min-h-[200px]">
-                    <!-- Post preview will be rendered here -->
+                <textarea id="post-preview" class="w-full bg-white/30 dark:bg-slate-800/30 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-white/20 min-h-[200px] text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" placeholder="Generated post will appear here..."></textarea>
+                
+                <div id="regenerate-options" class="hidden mt-4 space-x-2">
+                    <button id="regen-shorter" class="regenerate-btn bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 text-sm font-medium">Make it Shorter</button>
+                    <button id="regen-enthusiastic" class="regenerate-btn bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 text-sm font-medium">Make it More Enthusiastic</button>
+                    <button id="regen-hashtags" class="regenerate-btn bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 px-4 py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 text-sm font-medium">Add More Hashtags</button>
                 </div>
-                <pre id="generated-post" class="hidden"></pre>
+
+                <div id="strategic-tooltip" class="mt-4 p-3 bg-indigo-100/50 dark:bg-indigo-900/20 rounded-lg text-center">
+                    <p class="text-sm text-indigo-800 dark:text-indigo-200">💡 AI-generated posts perform 40% better when you add one personal sentence at the beginning.</p>
+                </div>
+
+                <div id="hashtag-cloud" class="mt-4">
+                    <!-- Hashtags will be rendered here -->
+                </div>
             </div>
         </div>
     </div>
