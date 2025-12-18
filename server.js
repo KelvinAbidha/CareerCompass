@@ -1,11 +1,11 @@
+require('dotenv').config();
 const http = require('http');
 const https = require('https');
 const fs = require('fs').promises;
 const path = require('path');
 
-// TODO: Replace 'PASTE_YOUR_API_KEY_HERE' with your actual Google AI API key.
-// For better security, consider loading this from an environment variable.
-const API_KEY = 'AIzaSyB4d_8RVG98SSmRoLOfrBNUDrKQYfZcpnU';
+
+const API_KEY = process.env.API_KEY;
 
 const DB_PATH = path.join(__dirname, 'db.json');
 
