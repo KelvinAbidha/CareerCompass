@@ -44,8 +44,56 @@ const logsPerPage = 5;
 // Fetch initial data
 document.addEventListener('DOMContentLoaded', () => {
     fetchLogs();
+    setupSSE();
     logDate.valueAsDate = new Date();
 });
+
+function setupSSE() {
+    const evtSource = new EventSource("/api/stream/updates");
+    evtSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.type === 'log_created') {
+            const newLog = data.data;
+            // Add to the top of logs
+            logs.unshift(newLog);
+            // Re-render current views
+            renderWeeklyActivities(logs, sortBy.value, startDate.value, endDate.value, filterByTag.value);
+            renderHeatmap(logs);
+
+            // Add to live community feed
+            addLogToFeed(newLog);
+        }
+    };
+    evtSource.onerror = (err) => {
+        console.error("SSE Error:", err);
+    };
+}
+
+function addLogToFeed(log) {
+    const feed = document.getElementById('community-feed');
+    if (feed && feed.querySelector('p.italic')) {
+        feed.innerHTML = ''; // Remove placeholder
+    }
+    if (feed) {
+        const item = document.createElement('div');
+        item.className = "p-4 bg-white/50 dark:bg-slate-700/50 rounded-lg shadow-sm border border-slate-200 dark:border-slate-600 animate-fade-in-down";
+        item.innerHTML = `
+            <div class="flex items-center mb-2">
+                <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold text-sm mr-3">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-slate-800 dark:text-slate-200">Someone logged activity</p>
+                    <p class="text-[10px] text-slate-500">${new Date(log.timestamp).toLocaleTimeString()}</p>
+                </div>
+            </div>
+            <p class="text-sm font-medium text-slate-900 dark:text-white">${log.title}</p>
+            <p class="text-xs text-slate-600 dark:text-slate-400 truncate mt-1">${log.description}</p>
+        `;
+        feed.prepend(item);
+    }
+}
+
 
 
 async function fetchLogs() {
@@ -87,7 +135,7 @@ async function deleteLog(logId) {
     if (confirm('Are you sure you want to delete this log?')) {
         try {
             const response = await fetch(`/api/logs/${logId}`, { method: 'DELETE' });
-             if (!response.ok) {
+            if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             console.log("Document with ID: ", logId, " deleted");
@@ -137,7 +185,7 @@ function renderWeeklyActivities(logsToRender, sortByValue, startDateValue, endDa
     }
 
     logsList.innerHTML = '';
-    if(weeklyActivities.length === 0) {
+    if (weeklyActivities.length === 0) {
         logsList.innerHTML = `
             <div class="text-center py-12 col-span-full">
                 <svg class="mx-auto h-24 w-24 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
@@ -154,7 +202,7 @@ function renderWeeklyActivities(logsToRender, sortByValue, startDateValue, endDa
     const indexOfFirstLog = indexOfLastLog - logsPerPage;
     const currentLogs = weeklyActivities.slice(indexOfFirstLog, indexOfLastLog);
 
-    
+
     currentLogs.forEach(log => {
         const logElement = document.createElement('div');
         logElement.classList.add('break-inside-avoid', 'mb-8');
@@ -394,7 +442,7 @@ async function saveLog(log) {
         }
         const newLog = await response.json();
         console.log("Document written with ID: ", newLog.id);
-        fetchLogs(); // Refresh logs
+        // fetchLogs(); // Handled by SSE now
     } catch (e) {
         console.error("Error adding document: ", e);
     }
@@ -414,7 +462,7 @@ function renderHeatmap(logs) {
 
     heatmap.innerHTML = '';
 
-    if(logs.length === 0) {
+    if (logs.length === 0) {
         heatmap.innerHTML = `
             <div class="text-center py-8">
                 <svg class="mx-auto h-16 w-16 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
@@ -429,7 +477,7 @@ function renderHeatmap(logs) {
 
     const today = new Date();
     const heatmapDays = 90;
-    
+
     const grid = document.createElement('div');
     grid.classList.add('grid', 'grid-flow-col', 'grid-rows-7', 'gap-1.5');
 
