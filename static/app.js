@@ -10,21 +10,26 @@ const logDescription = document.getElementById('log-description');
 const charCount = document.getElementById('char-count');
 const maxChars = 280;
 
-logDescription.addEventListener('input', () => {
-    const remaining = maxChars - logDescription.value.length;
-    charCount.textContent = `${remaining} characters remaining`;
-});
+if (logDescription) {
+    logDescription.addEventListener('input', () => {
+        const remaining = maxChars - logDescription.value.length;
+        charCount.textContent = `${remaining} characters remaining`;
+    });
+}
+
 const logImageUrl = document.getElementById('log-image-url');
 const imagePreview = document.getElementById('image-preview');
 
-logImageUrl.addEventListener('input', () => {
-    if (logImageUrl.value) {
-        imagePreview.src = logImageUrl.value;
-        imagePreview.style.display = 'block';
-    } else {
-        imagePreview.style.display = 'none';
-    }
-});
+if (logImageUrl) {
+    logImageUrl.addEventListener('input', () => {
+        if (logImageUrl.value) {
+            imagePreview.src = logImageUrl.value;
+            imagePreview.style.display = 'block';
+        } else {
+            imagePreview.style.display = 'none';
+        }
+    });
+}
 const logTags = document.getElementById('log-tags');
 const logsList = document.getElementById('logs-list');
 const generatePostBtn = document.getElementById('generate-post-btn');
@@ -45,7 +50,7 @@ const logsPerPage = 5;
 document.addEventListener('DOMContentLoaded', () => {
     fetchLogs();
     setupSSE();
-    logDate.valueAsDate = new Date();
+    if (logDate) logDate.valueAsDate = new Date();
 });
 
 function setupSSE() {
@@ -57,7 +62,7 @@ function setupSSE() {
             // Add to the top of logs
             logs.unshift(newLog);
             // Re-render current views
-            renderWeeklyActivities(logs, sortBy.value, startDate.value, endDate.value, filterByTag.value);
+            renderWeeklyActivities(logs, sortBy?.value, startDate?.value, endDate?.value, filterByTag?.value);
             renderHeatmap(logs);
 
             // Add to live community feed
@@ -184,138 +189,150 @@ function renderWeeklyActivities(logsToRender, sortByValue, startDateValue, endDa
         weeklyActivities.sort((a, b) => a.title.localeCompare(b.title));
     }
 
-    logsList.innerHTML = '';
-    if (weeklyActivities.length === 0) {
-        logsList.innerHTML = `
-            <div class="text-center py-12 col-span-full">
-                <svg class="mx-auto h-24 w-24 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <h3 class="mt-2 text-lg font-medium text-slate-900 dark:text-white">No logs found</h3>
-                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Get started by logging your first activity.</p>
-            </div>
-        `;
-        return;
-    }
-
-    const indexOfLastLog = currentPage * logsPerPage;
-    const indexOfFirstLog = indexOfLastLog - logsPerPage;
-    const currentLogs = weeklyActivities.slice(indexOfFirstLog, indexOfLastLog);
-
-
-    currentLogs.forEach(log => {
-        const logElement = document.createElement('div');
-        logElement.classList.add('break-inside-avoid', 'mb-8');
-        logElement.setAttribute('data-id', log.id);
-
-        const description = log.description;
-        const shortDescription = description.length > 100 ? `${description.substring(0, 100)}...` : description;
-
-        logElement.innerHTML = `
-            <div class="group relative block w-full bg-white/30 dark:bg-slate-800/30 backdrop-blur-md rounded-2xl shadow-lg border border-white/20 overflow-hidden">
-                <div class="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center">
-                    <button class="edit-log-btn text-slate-600 dark:text-slate-300 bg-white/50 dark:bg-slate-700/50 backdrop-blur-md rounded-full p-2 leading-none hover:scale-110 transition-transform" data-id="${log.id}">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z" /></svg>
-                    </button>
-                    <button class="delete-log-btn text-slate-600 dark:text-slate-300 bg-white/50 dark:bg-slate-700/50 backdrop-blur-md rounded-full p-2 leading-none hover:scale-110 transition-transform ml-1" data-id="${log.id}">
-                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                    </button>
+    if (logsList) {
+        logsList.innerHTML = '';
+        if (weeklyActivities.length === 0) {
+            logsList.innerHTML = `
+                <div class="text-center py-12 col-span-full">
+                    <svg class="mx-auto h-24 w-24 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    <h3 class="mt-2 text-lg font-medium text-slate-900 dark:text-white">No logs found</h3>
+                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Get started by logging your first activity.</p>
                 </div>
-                ${log.imageUrl ? `<img src="${log.imageUrl}" class="w-full h-auto object-cover">` : ''}
-                <div class="p-5">
-                    <h3 class="font-bold text-lg text-slate-900 dark:text-white">${log.title}</h3>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-2">${log.timestamp ? new Date(log.timestamp).toLocaleDateString() : 'Date not available'}</p>
-                    <p class="text-slate-700 dark:text-slate-300 leading-relaxed">${shortDescription}</p>
-                    ${description.length > 100 ? '<button class="show-more-btn text-indigo-500 dark:text-indigo-400 hover:underline text-sm font-semibold mt-2">Show more</button>' : ''}
-                    <div class="mt-4 flex flex-wrap">
-                        ${log.tags ? log.tags.map(tag => `<span class="${getTagColor(tag)} text-xs font-medium mr-2 mb-2 px-2.5 py-1 rounded-full">${tag}</span>`).join('') : ''}
+            `;
+            return;
+        }
+
+        const indexOfLastLog = currentPage * logsPerPage;
+        const indexOfFirstLog = indexOfLastLog - logsPerPage;
+        const currentLogs = weeklyActivities.slice(indexOfFirstLog, indexOfLastLog);
+
+
+        currentLogs.forEach(log => {
+            const logElement = document.createElement('div');
+            logElement.classList.add('break-inside-avoid', 'mb-8');
+            logElement.setAttribute('data-id', log.id);
+
+            const description = log.description;
+            const shortDescription = description.length > 100 ? `${description.substring(0, 100)}...` : description;
+
+            logElement.innerHTML = `
+                <div class="group relative block w-full bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl rounded-3xl shadow-lg hover:shadow-xl border border-white/40 dark:border-gray-800/60 overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
+                    <div class="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-2">
+                        <button class="edit-log-btn text-slate-600 dark:text-gray-300 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-full p-2.5 shadow-sm hover:shadow-md hover:bg-white dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all" data-id="${log.id}" title="Edit log">
+                            <svg class="w-4 h-4 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z" /></svg>
+                        </button>
+                        <button class="delete-log-btn text-slate-600 dark:text-gray-300 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-full p-2.5 shadow-sm hover:shadow-md hover:bg-white dark:hover:bg-gray-700 hover:text-rose-600 dark:hover:text-rose-400 transition-all" data-id="${log.id}" title="Delete log">
+                             <svg class="w-4 h-4 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    </div>
+                    ${log.imageUrl ? `<img src="${log.imageUrl}" class="w-full h-48 object-cover border-b border-gray-100 dark:border-gray-800">` : ''}
+                    <div class="p-6">
+                        <h3 class="font-bold text-xl text-slate-900 dark:text-white tracking-tight mb-1">${log.title}</h3>
+                        <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400 mb-3">${log.timestamp ? new Date(log.timestamp).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) : 'Date not available'}</p>
+                        <p class="text-slate-700 dark:text-gray-300 leading-relaxed text-sm mb-4" data-full-description="${description.replace(/"/g, '&quot;')}">${shortDescription}</p>
+                        ${description.length > 100 ? '<button class="show-more-btn text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline text-sm font-semibold transition-colors">Show more</button>' : ''}
+                        <div class="mt-4 flex flex-wrap gap-2">
+                            ${log.tags ? log.tags.map(tag => `<span class="${getTagColor(tag)} text-xs font-semibold px-3 py-1 rounded-full shadow-sm border border-transparent hover:border-current transition-colors cursor-pointer tag-btn">${tag}</span>`).join('') : ''}
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-        logsList.appendChild(logElement);
-    });
+            `;
+            logsList.appendChild(logElement);
+        });
+    }
 
     // Update generator button
-    const numActivities = weeklyActivities.length;
-    generatePostBtn.textContent = `Generate Post (${numActivities} Activities)`;
-    generatePostBtn.disabled = numActivities === 0;
+    if (generatePostBtn) {
+        const numActivities = weeklyActivities.length;
+        generatePostBtn.textContent = `Generate Post (${numActivities} Activities)`;
+        generatePostBtn.disabled = numActivities === 0;
+    }
 
     // Update pagination buttons
-    prevPageBtn.disabled = currentPage === 1;
-    nextPageBtn.disabled = indexOfLastLog >= weeklyActivities.length;
+    if (prevPageBtn && nextPageBtn) {
+        prevPageBtn.disabled = currentPage === 1;
+        const indexOfLastLog = currentPage * logsPerPage;
+        nextPageBtn.disabled = indexOfLastLog >= weeklyActivities.length;
+    }
 }
 
 function getTagColor(tag) {
     const colors = [
-        'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300',
-        'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300',
-        'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300',
-        'bg-pink-100 text-pink-800 dark:bg-pink-900/50 dark:text-pink-300',
-        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300',
-        'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300',
+        'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400',
+        'bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-400',
+        'bg-pink-50 text-pink-700 dark:bg-pink-500/10 dark:text-pink-400',
+        'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400',
+        'bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400',
+        'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400',
+        'bg-cyan-50 text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-400'
     ];
     // simple hash to get a color
     const hash = tag.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
     return colors[hash % colors.length];
 }
 
-prevPageBtn.addEventListener('click', () => {
-    currentPage--;
-    renderWeeklyActivities(logs, sortBy.value, startDate.value, endDate.value, filterByTag.value);
-});
+if (prevPageBtn && nextPageBtn) {
+    prevPageBtn.addEventListener('click', () => {
+        currentPage--;
+        renderWeeklyActivities(logs, sortBy.value, startDate.value, endDate.value, filterByTag.value);
+    });
 
-nextPageBtn.addEventListener('click', () => {
-    currentPage++;
-    renderWeeklyActivities(logs, sortBy.value, startDate.value, endDate.value, filterByTag.value);
-});
+    nextPageBtn.addEventListener('click', () => {
+        currentPage++;
+        renderWeeklyActivities(logs, sortBy.value, startDate.value, endDate.value, filterByTag.value);
+    });
+}
 
-startDate.addEventListener('change', (e) => {
-    const startDateValue = e.target.value;
-    const endDateValue = endDate.value;
-    const sortByValue = sortBy.value;
-    const searchQuery = searchBar.value.toLowerCase();
-    const filteredLogs = logs.filter(log => log.title.toLowerCase().includes(searchQuery));
-    renderWeeklyActivities(filteredLogs, sortByValue, startDateValue, endDateValue, filterByTag.value);
-});
+if (startDate && endDate && searchBar && sortBy && filterByTag && clearFiltersBtn) {
+    startDate.addEventListener('change', (e) => {
+        const startDateValue = e.target.value;
+        const endDateValue = endDate.value;
+        const sortByValue = sortBy.value;
+        const searchQuery = searchBar.value.toLowerCase();
+        const filteredLogs = logs.filter(log => log.title.toLowerCase().includes(searchQuery));
+        renderWeeklyActivities(filteredLogs, sortByValue, startDateValue, endDateValue, filterByTag.value);
+    });
 
-endDate.addEventListener('change', (e) => {
-    const startDateValue = startDate.value;
-    const endDateValue = e.target.value;
-    const sortByValue = sortBy.value;
-    const searchQuery = searchBar.value.toLowerCase();
-    const filteredLogs = logs.filter(log => log.title.toLowerCase().includes(searchQuery));
-    renderWeeklyActivities(filteredLogs, sortByValue, startDateValue, endDateValue, filterByTag.value);
-});
+    endDate.addEventListener('change', (e) => {
+        const startDateValue = startDate.value;
+        const endDateValue = e.target.value;
+        const sortByValue = sortBy.value;
+        const searchQuery = searchBar.value.toLowerCase();
+        const filteredLogs = logs.filter(log => log.title.toLowerCase().includes(searchQuery));
+        renderWeeklyActivities(filteredLogs, sortByValue, startDateValue, endDateValue, filterByTag.value);
+    });
 
-sortBy.addEventListener('change', (e) => {
-    const sortByValue = e.target.value;
-    const searchQuery = searchBar.value.toLowerCase();
-    const filteredLogs = logs.filter(log => log.title.toLowerCase().includes(searchQuery));
-    renderWeeklyActivities(filteredLogs, sortByValue, startDate.value, endDate.value, filterByTag.value);
-});
+    sortBy.addEventListener('change', (e) => {
+        const sortByValue = e.target.value;
+        const searchQuery = searchBar.value.toLowerCase();
+        const filteredLogs = logs.filter(log => log.title.toLowerCase().includes(searchQuery));
+        renderWeeklyActivities(filteredLogs, sortByValue, startDate.value, endDate.value, filterByTag.value);
+    });
 
-searchBar.addEventListener('input', (e) => {
-    const searchQuery = e.target.value.toLowerCase();
-    const filteredLogs = logs.filter(log => log.title.toLowerCase().includes(searchQuery));
-    renderWeeklyActivities(filteredLogs, sortBy.value, startDate.value, endDate.value, filterByTag.value);
-});
+    searchBar.addEventListener('input', (e) => {
+        const searchQuery = e.target.value.toLowerCase();
+        const filteredLogs = logs.filter(log => log.title.toLowerCase().includes(searchQuery));
+        renderWeeklyActivities(filteredLogs, sortBy.value, startDate.value, endDate.value, filterByTag.value);
+    });
 
-filterByTag.addEventListener('input', (e) => {
-    const tagFilter = e.target.value;
-    const searchQuery = searchBar.value.toLowerCase();
-    const filteredLogs = logs.filter(log => log.title.toLowerCase().includes(searchQuery));
-    renderWeeklyActivities(filteredLogs, sortBy.value, startDate.value, endDate.value, tagFilter);
-});
+    filterByTag.addEventListener('input', (e) => {
+        const tagFilter = e.target.value;
+        const searchQuery = searchBar.value.toLowerCase();
+        const filteredLogs = logs.filter(log => log.title.toLowerCase().includes(searchQuery));
+        renderWeeklyActivities(filteredLogs, sortBy.value, startDate.value, endDate.value, tagFilter);
+    });
 
-clearFiltersBtn.addEventListener('click', () => {
-    searchBar.value = '';
-    sortBy.value = 'date';
-    startDate.value = '';
-    endDate.value = '';
-    filterByTag.value = '';
-    renderWeeklyActivities(logs, 'date');
-});
+    clearFiltersBtn.addEventListener('click', () => {
+        searchBar.value = '';
+        sortBy.value = 'date';
+        startDate.value = '';
+        endDate.value = '';
+        filterByTag.value = '';
+        renderWeeklyActivities(logs, 'date');
+    });
+}
 
 function copyLog(logId) {
     const log = logs.find(log => log.id === logId);
@@ -365,70 +382,78 @@ async function updateLog(logId, updatedLog) {
     }
 }
 
-logsList.addEventListener('click', (e) => {
-    if (e.target.classList.contains('show-more-btn')) {
-        const p = e.target.previousElementSibling;
-        p.textContent = p.dataset.fullDescription;
-        e.target.textContent = 'Show less';
-        e.target.classList.remove('show-more-btn');
-        e.target.classList.add('show-less-btn');
-    } else if (e.target.classList.contains('show-less-btn')) {
-        const p = e.target.previousElementSibling;
-        p.textContent = `${p.dataset.fullDescription.substring(0, 100)}...`;
-        e.target.textContent = 'Show more';
-        e.target.classList.remove('show-less-btn');
-        e.target.classList.add('show-more-btn');
-    } else if (e.target.classList.contains('delete-log-btn')) {
-        const logId = e.target.dataset.id;
-        deleteLog(logId);
-    } else if (e.target.classList.contains('edit-log-btn')) {
-        const logId = e.target.dataset.id;
-        editLog(logId);
-    } else if (e.target.classList.contains('copy-log-btn')) {
-        const logId = e.target.dataset.id;
-        copyLog(logId);
-    } else if (e.target.classList.contains('cancel-edit-btn')) {
-        fetchLogs();
-    } else if (e.target.classList.contains('tag-btn')) {
-        filterByTag.value = e.target.textContent;
-        const tagFilter = e.target.textContent;
-        const searchQuery = searchBar.value.toLowerCase();
-        const filteredLogs = logs.filter(log => log.title.toLowerCase().includes(searchQuery));
-        renderWeeklyActivities(filteredLogs, sortBy.value, startDate.value, endDate.value, tagFilter);
-    }
-});
+if (logsList) {
+    logsList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('show-more-btn')) {
+            const p = e.target.previousElementSibling;
+            p.textContent = p.dataset.fullDescription;
+            e.target.textContent = 'Show less';
+            e.target.classList.remove('show-more-btn');
+            e.target.classList.add('show-less-btn');
+        } else if (e.target.classList.contains('show-less-btn')) {
+            const p = e.target.previousElementSibling;
+            p.textContent = `${p.dataset.fullDescription.substring(0, 100)}...`;
+            e.target.textContent = 'Show more';
+            e.target.classList.remove('show-less-btn');
+            e.target.classList.add('show-more-btn');
+        } else if (e.target.classList.contains('delete-log-btn')) {
+            const logId = e.target.dataset.id;
+            deleteLog(logId);
+        } else if (e.target.classList.contains('edit-log-btn')) {
+            const logId = e.target.dataset.id;
+            editLog(logId);
+        } else if (e.target.classList.contains('copy-log-btn')) {
+            const logId = e.target.dataset.id;
+            copyLog(logId);
+        } else if (e.target.classList.contains('cancel-edit-btn')) {
+            fetchLogs();
+        } else if (e.target.classList.contains('tag-btn')) {
+            if (filterByTag) {
+                filterByTag.value = e.target.textContent;
+                const tagFilter = e.target.textContent;
+                const searchQuery = searchBar ? searchBar.value.toLowerCase() : '';
+                const filteredLogs = logs.filter(log => log.title.toLowerCase().includes(searchQuery));
+                renderWeeklyActivities(filteredLogs, sortBy?.value, startDate?.value, endDate?.value, tagFilter);
+            }
+        }
+    });
 
-logsList.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if (e.target.classList.contains('edit-log-form')) {
-        const logId = e.target.dataset.id;
-        const updatedLog = {
-            title: e.target.querySelector('input[type="text"]').value,
-            description: e.target.querySelector('textarea').value,
-            imageUrl: e.target.querySelectorAll('input[type="text"]')[1].value,
-            tags: e.target.querySelectorAll('input[type="text"]')[2].value.split(',').map(tag => tag.trim()).filter(tag => tag)
-        };
-        updateLog(logId, updatedLog);
-    }
-});
+    logsList.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (e.target.classList.contains('edit-log-form')) {
+            const logId = e.target.dataset.id;
+            const updatedLog = {
+                title: e.target.querySelector('input[type="text"]').value,
+                description: e.target.querySelector('textarea').value,
+                imageUrl: e.target.querySelectorAll('input[type="text"]')[1].value,
+                tags: e.target.querySelectorAll('input[type="text"]')[2].value.split(',').map(tag => tag.trim()).filter(tag => tag)
+            };
+            updateLog(logId, updatedLog);
+        }
+    });
+}
 
 // Form submission
-logForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+if (logForm) {
+    logForm.addEventListener('submit', (e) => {
+        e.preventDefault();
 
-    const log = {
-        date: logDate.value,
-        title: logTitle.value,
-        description: logDescription.value,
-        imageUrl: logImageUrl.value,
-        tags: logTags.value.split(',').map(tag => tag.trim()).filter(tag => tag),
-    };
+        const log = {
+            date: logDate.value,
+            title: logTitle.value,
+            description: logDescription.value,
+            imageUrl: logImageUrl.value,
+            tags: logTags.value.split(',').map(tag => tag.trim()).filter(tag => tag),
+        };
 
-    saveLog(log);
+        saveLog(log);
 
-    logForm.reset();
-    imagePreview.style.display = 'none';
-});
+        logForm.reset();
+        if (imagePreview) {
+            imagePreview.style.display = 'none';
+        }
+    });
+}
 
 async function saveLog(log) {
     try {
@@ -452,6 +477,8 @@ async function saveLog(log) {
 console.log("Career Compass App Loaded (Local API)");
 
 function renderHeatmap(logs) {
+    if (!heatmap) return;
+
     const contributions = new Map();
     logs.forEach(log => {
         if (log.timestamp) {
@@ -497,10 +524,9 @@ function renderHeatmap(logs) {
 }
 
 function getColor(count) {
-    const isDarkMode = document.documentElement.classList.contains('dark');
-    if (count === 0) return isDarkMode ? 'rgb(30 41 59 / 0.5)' : 'rgb(241 245 249 / 0.5)';
-    if (count < 2) return '#a5b4fc'; // indigo-300
-    if (count < 4) return '#818cf8'; // indigo-400
-    if (count < 6) return '#6366f1'; // indigo-500
-    return '#4f46e5'; // indigo-600
+    if (count === 0) return '#dbeafe'; // blue-100
+    if (count < 2) return '#93c5fd'; // blue-300
+    if (count < 4) return '#60a5fa'; // blue-400
+    if (count < 6) return '#3b82f6'; // blue-500
+    return '#1d4ed8'; // blue-700
 }
