@@ -81,19 +81,19 @@ function addLogToFeed(log) {
     }
     if (feed) {
         const item = document.createElement('div');
-        item.className = "p-4 bg-white/50 dark:bg-slate-700/50 rounded-lg shadow-sm border border-slate-200 dark:border-slate-600 animate-fade-in-down";
+        item.className = "p-4 bg-white/50 rounded-lg shadow-sm border border-slate-200 animate-fade-in-down";
         item.innerHTML = `
             <div class="flex items-center mb-2">
-                <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold text-sm mr-3">
+                <div class="w-8 h-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-700 font-bold text-sm mr-3">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                 </div>
                 <div>
-                    <p class="text-sm font-semibold text-slate-800 dark:text-slate-200">Someone logged activity</p>
+                    <p class="text-sm font-semibold text-slate-800">Someone logged activity</p>
                     <p class="text-[10px] text-slate-500">${new Date(log.timestamp).toLocaleTimeString()}</p>
                 </div>
             </div>
-            <p class="text-sm font-medium text-slate-900 dark:text-white">${log.title}</p>
-            <p class="text-xs text-slate-600 dark:text-slate-400 truncate mt-1">${log.description}</p>
+            <p class="text-sm font-medium text-slate-900">${log.title}</p>
+            <p class="text-xs text-slate-600 truncate mt-1">${log.description}</p>
         `;
         feed.prepend(item);
     }
@@ -197,8 +197,8 @@ function renderWeeklyActivities(logsToRender, sortByValue, startDateValue, endDa
                     <svg class="mx-auto h-24 w-24 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    <h3 class="mt-2 text-lg font-medium text-slate-900 dark:text-white">No logs found</h3>
-                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Get started by logging your first activity.</p>
+                    <h3 class="mt-2 text-lg font-medium text-slate-900">No logs found</h3>
+                    <p class="mt-1 text-sm text-slate-500">Get started by logging your first activity.</p>
                 </div>
             `;
             return;
@@ -218,21 +218,21 @@ function renderWeeklyActivities(logsToRender, sortByValue, startDateValue, endDa
             const shortDescription = description.length > 100 ? `${description.substring(0, 100)}...` : description;
 
             logElement.innerHTML = `
-                <div class="group relative block w-full bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl rounded-3xl shadow-lg hover:shadow-xl border border-white/40 dark:border-gray-800/60 overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
+                <div class="group relative block w-full bg-white/30 backdrop-blur-md rounded-2xl shadow-lg hover:shadow-lg border border-white/20 overflow-hidden transition-all duration-300 transform hover:-translate-y-1">
                     <div class="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center gap-2">
-                        <button class="edit-log-btn text-slate-600 dark:text-gray-300 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-full p-2.5 shadow-sm hover:shadow-md hover:bg-white dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all" data-id="${log.id}" title="Edit log">
+                        <button class="edit-log-btn text-slate-600 bg-white/80 backdrop-blur-md rounded-full p-2.5 shadow-sm hover:shadow-md hover:bg-white hover:text-indigo-600 transition-all" data-id="${log.id}" title="Edit log">
                             <svg class="w-4 h-4 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z" /></svg>
                         </button>
-                        <button class="delete-log-btn text-slate-600 dark:text-gray-300 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-full p-2.5 shadow-sm hover:shadow-md hover:bg-white dark:hover:bg-gray-700 hover:text-rose-600 dark:hover:text-rose-400 transition-all" data-id="${log.id}" title="Delete log">
+                        <button class="delete-log-btn text-slate-600 bg-white/80 backdrop-blur-md rounded-full p-2.5 shadow-sm hover:shadow-md hover:bg-white hover:text-rose-600 transition-all" data-id="${log.id}" title="Delete log">
                              <svg class="w-4 h-4 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                         </button>
                     </div>
-                    ${log.imageUrl ? `<img src="${log.imageUrl}" class="w-full h-48 object-cover border-b border-gray-100 dark:border-gray-800">` : ''}
+                    ${log.imageUrl ? `<img src="${log.imageUrl}" class="w-full h-48 object-cover border-b border-gray-100">` : ''}
                     <div class="p-6">
-                        <h3 class="font-bold text-xl text-slate-900 dark:text-white tracking-tight mb-1">${log.title}</h3>
-                        <p class="text-xs font-medium text-indigo-600 dark:text-indigo-400 mb-3">${log.timestamp ? new Date(log.timestamp).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) : 'Date not available'}</p>
-                        <p class="text-slate-700 dark:text-gray-300 leading-relaxed text-sm mb-4" data-full-description="${description.replace(/"/g, '&quot;')}">${shortDescription}</p>
-                        ${description.length > 100 ? '<button class="show-more-btn text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:underline text-sm font-semibold transition-colors">Show more</button>' : ''}
+                        <h3 class="font-bold text-xl text-slate-900 tracking-tight mb-1">${log.title}</h3>
+                        <p class="text-xs font-medium text-indigo-600 mb-3">${log.timestamp ? new Date(log.timestamp).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) : 'Date not available'}</p>
+                        <p class="text-slate-700 leading-relaxed text-sm mb-4" data-full-description="${description.replace(/"/g, '&quot;')}">${shortDescription}</p>
+                        ${description.length > 100 ? '<button class="show-more-btn text-indigo-600 hover:text-indigo-700 hover:underline text-sm font-semibold transition-colors">Show more</button>' : ''}
                         <div class="mt-4 flex flex-wrap gap-2">
                             ${log.tags ? log.tags.map(tag => `<span class="${getTagColor(tag)} text-xs font-semibold px-3 py-1 rounded-full shadow-sm border border-transparent hover:border-current transition-colors cursor-pointer tag-btn">${tag}</span>`).join('') : ''}
                         </div>
@@ -260,13 +260,13 @@ function renderWeeklyActivities(logsToRender, sortByValue, startDateValue, endDa
 
 function getTagColor(tag) {
     const colors = [
-        'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400',
-        'bg-purple-50 text-purple-700 dark:bg-purple-500/10 dark:text-purple-400',
-        'bg-pink-50 text-pink-700 dark:bg-pink-500/10 dark:text-pink-400',
-        'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400',
-        'bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400',
-        'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400',
-        'bg-cyan-50 text-cyan-700 dark:bg-cyan-500/10 dark:text-cyan-400'
+        'bg-indigo-50 text-indigo-700',
+        'bg-purple-50 text-purple-700',
+        'bg-pink-50 text-pink-700',
+        'bg-emerald-50 text-emerald-700',
+        'bg-rose-50 text-rose-700',
+        'bg-amber-50 text-amber-700',
+        'bg-cyan-50 text-cyan-700'
     ];
     // simple hash to get a color
     const hash = tag.split('').reduce((acc, char) => char.charCodeAt(0) + acc, 0);
@@ -495,8 +495,8 @@ function renderHeatmap(logs) {
                 <svg class="mx-auto h-16 w-16 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <h3 class="mt-2 text-lg font-medium text-slate-900 dark:text-white">No activity yet</h3>
-                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Your contributions will appear here.</p>
+                <h3 class="mt-2 text-lg font-medium text-slate-900">No activity yet</h3>
+                <p class="mt-1 text-sm text-slate-500">Your contributions will appear here.</p>
             </div>
         `;
         return;

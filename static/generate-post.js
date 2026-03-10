@@ -155,7 +155,7 @@ function renderHashtagCloud(hashtags) {
     if (hashtags.length === 0) return;
 
     const title = document.createElement('h3');
-    title.className = 'text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2';
+    title.className = 'text-sm font-semibold text-slate-700 mb-2';
     title.textContent = 'Suggested Hashtags';
     hashtagCloud.appendChild(title);
 
@@ -164,7 +164,7 @@ function renderHashtagCloud(hashtags) {
 
     hashtags.forEach(tag => {
         const button = document.createElement('button');
-        button.className = 'hashtag-btn bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full hover:bg-blue-200 dark:hover:bg-blue-800/50 text-sm';
+        button.className = 'hashtag-btn bg-blue-100 text-blue-800 px-3 py-1 rounded-full hover:bg-blue-200 text-sm';
         button.textContent = tag;
         container.appendChild(button);
     });
@@ -254,21 +254,21 @@ function renderPost(weeklyActivities) {
     postContainer.innerHTML = '';
 
     if (weeklyActivities.length === 0) {
-        postContainer.innerHTML = '<p class="text-slate-500 dark:text-slate-400">No activities logged for this week to generate a post from.</p>';
+        postContainer.innerHTML = '<p class="text-slate-500">No activities logged for this week to generate a post from.</p>';
         return;
     }
 
     weeklyActivities.forEach((log, index) => {
         const logElement = document.createElement('div');
-        logElement.classList.add('p-5', 'bg-white/30', 'dark:bg-slate-800/30', 'backdrop-blur-md', 'rounded-2xl', 'shadow-lg', 'border', 'border-white/20', 'flex', 'flex-col');
+        logElement.classList.add('p-5', 'bg-white/30', '', 'backdrop-blur-md', 'rounded-2xl', 'shadow-lg', 'border', 'border-white/20', 'flex', 'flex-col');
         logElement.innerHTML = `
             <div class="flex-grow">
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white">${log.title}</h3>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-2">${log.timestamp ? new Date(log.timestamp).toLocaleDateString() : 'Date not available'}</p>
-                <p class="text-slate-700 dark:text-slate-300 leading-relaxed">${log.description}</p>
+                <h3 class="text-lg font-bold text-slate-900">${log.title}</h3>
+                <p class="text-sm text-slate-500 mb-2">${log.timestamp ? new Date(log.timestamp).toLocaleDateString() : 'Date not available'}</p>
+                <p class="text-slate-700 leading-relaxed">${log.description}</p>
                 ${log.imageUrl ? `<img src="${log.imageUrl}" class="mt-4 w-full h-auto object-cover rounded-lg">` : ''}
             </div>
-            <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+            <div class="mt-4 pt-4 border-t border-slate-200">
                 <button data-log-index="${index}" class="generate-single-post-btn w-full bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-600 transition-all flex items-center justify-center">
                     <i data-lucide="pen-square" class="w-4 h-4 mr-2"></i>
                     Generate Post for this Activity
