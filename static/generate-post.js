@@ -1,4 +1,3 @@
-import { generateContent } from './gemini.js';
 
 let weeklyActivities = [];
 
@@ -59,7 +58,7 @@ async function handleGeneratePost(activities, refinementInstruction = null) {
     const length = document.querySelector('input[name="length"]:checked').value;
     const emojiDensity = document.getElementById('emoji-density').value;
     const includeCta = document.getElementById('cta-toggle').checked;
-    
+
     const postPreview = document.getElementById('post-preview');
     const regenerateOptions = document.getElementById('regenerate-options');
     const hashtagCloud = document.getElementById('hashtag-cloud');
@@ -107,11 +106,11 @@ ${activities.map(activity => `- ${activity.title}: ${activity.description}`).joi
 Please generate a new post based on these activities, following all primary instructions and formatting rules.
 `;
     }
-    
+
     prompt = baseInstruction;
 
     const loadingSpinner = document.getElementById('loading-spinner');
-    
+
     loadingSpinner.classList.remove('hidden');
     regenerateOptions.classList.add('hidden');
     hashtagCloud.innerHTML = ''; // Clear previous hashtags
@@ -120,9 +119,22 @@ Please generate a new post based on these activities, following all primary inst
     }
 
     try {
-        const response = await generateContent(prompt);
-        let fullText = response.candidates[0].content.parts[0].text;
-        
+        const response = await fetch('/api/generate-post', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ prompt: prompt })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        let fullText = data.candidates[0].content.parts[0].text;
+
         let post = fullText;
         let hashtags = [];
 
@@ -135,7 +147,7 @@ Please generate a new post based on these activities, following all primary inst
                 hashtags = hashtagMatch[1].split(',').map(h => h.trim()).filter(h => h.startsWith('#'));
             }
         }
-        
+
         renderPreview(post);
         renderHashtagCloud(hashtags);
 
@@ -260,7 +272,7 @@ function renderPost(weeklyActivities) {
 
     weeklyActivities.forEach((log, index) => {
         const logElement = document.createElement('div');
-        logElement.classList.add('p-5', 'bg-white/30', '', 'backdrop-blur-md', 'rounded-2xl', 'shadow-lg', 'border', 'border-white/20', 'flex', 'flex-col');
+        logElement.classList.add('p-5', 'bg-white/30', 'backdrop-blur-md', 'rounded-2xl', 'shadow-lg', 'border', 'border-white/20', 'flex', 'flex-col');
         logElement.innerHTML = `
             <div class="flex-grow">
                 <h3 class="text-lg font-bold text-slate-900">${log.title}</h3>
