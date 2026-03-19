@@ -42,8 +42,10 @@ const filterByTag = document.getElementById('filter-by-tag');
 const prevPageBtn = document.getElementById('prev-page-btn');
 const nextPageBtn = document.getElementById('next-page-btn');
 const heatmap = document.getElementById('heatmap');
+const heatmapYearSelect = document.getElementById('heatmap-year-selector');
 
 let currentPage = 1;
+let currentHeatmapYear = new Date().getFullYear();
 const logsPerPage = 5;
 
 // Fetch initial data
@@ -51,6 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchLogs();
     setupSSE();
     if (logDate) logDate.valueAsDate = new Date();
+    if (heatmapYearSelect) {
+        heatmapYearSelect.addEventListener('change', (e) => {
+            currentHeatmapYear = parseInt(e.target.value, 10);
+            renderHeatmap(logs);
+        });
+    }
 });
 
 function setupSSE() {
@@ -476,16 +484,35 @@ async function saveLog(log) {
 // Career Compass App
 console.log("Career Compass App Loaded (Local API)");
 
-function renderHeatmap(logs) {
-    if (!heatmap) return;
-
-    const contributions = new Map();
+function populateHeatmapYears(logs) {
+    if (!heatmapYearSelect) return;
+    
+    const years = new Set();
+    years.add(new Date().getFullYear());
+    
     logs.forEach(log => {
         if (log.timestamp) {
-            const date = new Date(log.timestamp).toISOString().split('T')[0];
-            contributions.set(date, (contributions.get(date) || 0) + 1);
+            years.add(new Date(log.timestamp).getFullYear());
         }
     });
+
+    const sortedYears = Array.from(years).sort((a,b) => b - a);
+    
+    if (heatmapYearSelect.options.length !== sortedYears.length) {
+        heatmapYearSelect.innerHTML = '';
+        sortedYears.forEach(year => {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year;
+            if (year === currentHeatmapYear) option.selected = true;
+            heatmapYearSelect.appendChild(option);
+        });
+    }
+}
+
+function renderHeatmap(logs) {
+    if (!heatmap) return;
+    populateHeatmapYears(logs);
 
     heatmap.innerHTML = '';
 
@@ -502,25 +529,88 @@ function renderHeatmap(logs) {
         return;
     }
 
-    const today = new Date();
-    const heatmapDays = 90;
+    const contributions = new Map();
+    logs.forEach(log => {
+        if (log.timestamp) {
+            const logDate = new Date(log.timestamp);
+            const y = logDate.getFullYear();
+            const m = String(logDate.getMonth() + 1).padStart(2, '0');
+            const d = String(logDate.getDate()).padStart(2, '0');
+            const dateString = `${y}-${m}-${d}`;
+            contributions.set(dateString, (contributions.get(dateString) || 0) + 1);
+        }
+    });
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'w-full overflow-x-auto pb-4'; // Removed custom scrollbar class, relying on default scroll behavior
+
+    const daysColumn = document.createElement('div');
+    daysColumn.className = 'grid grid-rows-7 gap-1.5 text-[10px] text-slate-400 pr-3 py-1 text-right sticky left-0 bg-white/5 backdrop-blur-sm z-10';
+    daysColumn.style.minWidth = '30px';
+    
+    ['', 'Mon', '', 'Wed', '', 'Fri', ''].forEach(day => {
+        const div = document.createElement('div');
+        div.textContent = day;
+        div.className = 'h-3 flex items-center justify-end leading-none';
+        daysColumn.appendChild(div);
+    });
 
     const grid = document.createElement('div');
     grid.classList.add('grid', 'grid-flow-col', 'grid-rows-7', 'gap-1.5');
 
-    for (let i = heatmapDays - 1; i >= 0; i--) {
-        const date = new Date(today);
-        date.setDate(today.getDate() - i);
-        const dateString = date.toISOString().split('T')[0];
+    const startDate = new Date(currentHeatmapYear, 0, 1);
+    const endDate = new Date(currentHeatmapYear, 11, 31);
+    const oneDay = 24 * 60 * 60 * 1000;
+    const totalDays = Math.round((endDate.getTime() - startDate.getTime()) / oneDay) + 1;
+    
+    // Add empty padding cells so the first real date matches its correct day of the week
+    const startDayOfWeek = startDate.getDay(); 
+    for (let i = 0; i < startDayOfWeek; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.classList.add('w-3', 'h-3', 'rounded-[2px]', 'bg-transparent');
+        grid.appendChild(emptyCell);
+    }
+
+    for (let i = 0; i < totalDays; i++) {
+        const date = new Date(currentHeatmapYear, 0, i + 1);
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        const dateString = `${y}-${m}-${d}`;
         const count = contributions.get(dateString) || 0;
 
         const cell = document.createElement('div');
-        cell.classList.add('w-5', 'h-5', 'rounded');
+        cell.classList.add('w-3', 'h-3', 'rounded-[2px]', 'transition-all', 'duration-200', 'hover:ring-2', 'hover:ring-indigo-400', 'hover:scale-110', 'cursor-pointer');
         cell.style.backgroundColor = getColor(count);
-        cell.title = `${count} contributions on ${date.toLocaleDateString()}`;
+        
+        // Formatted tooltip
+        const dateFormatted = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        cell.title = count === 0 ? `No contributions on ${dateFormatted}` : `${count} contribution${count > 1 ? 's' : ''} on ${dateFormatted}`;
+        
         grid.appendChild(cell);
     }
-    heatmap.appendChild(grid);
+    
+    const flexContainer = document.createElement('div');
+    flexContainer.className = 'flex items-start';
+    flexContainer.appendChild(daysColumn);
+    flexContainer.appendChild(grid);
+    
+    wrapper.appendChild(flexContainer);
+
+    const legend = document.createElement('div');
+    legend.className = 'flex items-center justify-end text-[11px] text-slate-500 mt-4 gap-1.5 pt-4 border-t border-slate-100/20';
+    legend.innerHTML = `
+        <span class="mr-1">Less</span>
+        <div class="w-3 h-3 rounded-[2px]" style="background-color: ${getColor(0)}"></div>
+        <div class="w-3 h-3 rounded-[2px]" style="background-color: ${getColor(1)}"></div>
+        <div class="w-3 h-3 rounded-[2px]" style="background-color: ${getColor(3)}"></div>
+        <div class="w-3 h-3 rounded-[2px]" style="background-color: ${getColor(5)}"></div>
+        <div class="w-3 h-3 rounded-[2px]" style="background-color: ${getColor(6)}"></div>
+        <span class="ml-1">More</span>
+    `;
+
+    heatmap.appendChild(wrapper);
+    heatmap.appendChild(legend);
 }
 
 function getColor(count) {
