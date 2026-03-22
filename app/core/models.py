@@ -21,3 +21,14 @@ class Milestone(Base):
     description = Column(Text, nullable=True)
     achieved_at = Column(DateTime, default=datetime.datetime.utcnow)
     log_id = Column(Integer, nullable=True) # Optional link to a specific log 
+
+class JobApplication(Base):
+    __tablename__ = "applications"
+
+    id = Column(Integer, primary_key=True, index=True)
+    company_name = Column(String, index=True, nullable=False)
+    role = Column(String, nullable=False)
+    status = Column(String, default="Applied") # "Applied", "Interviewing", "Offer", "Rejected"
+    date_applied = Column(String, nullable=True) # YYYY-MM-DD
+    notes = Column(Text, nullable=True)
+    timestamp = Column(DateTime, default=datetime.datetime.utcnow)
