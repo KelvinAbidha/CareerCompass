@@ -45,9 +45,9 @@
         </div>
 
         <!-- Kanban Board -->
-        <div class="flex gap-6 overflow-x-auto pb-8 items-start min-h-[60vh] custom-scrollbar">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 pb-8 items-start min-h-[60vh]">
             <!-- Applied Column -->
-            <div class="kanban-column w-80 shrink-0 bg-white/40 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white/40 flex flex-col" data-status="Applied">
+            <div class="kanban-column bg-white/40 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white/40 flex flex-col" data-status="Applied">
                 <div class="flex justify-between items-center mb-4 px-1">
                     <h3 class="font-bold text-slate-800">✉️ Applied</h3>
                     <span class="bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded-full col-count">0</span>
@@ -56,7 +56,7 @@
             </div>
 
             <!-- Interviewing Column -->
-            <div class="kanban-column w-80 shrink-0 bg-white/40 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white/40 flex flex-col" data-status="Interviewing">
+            <div class="kanban-column bg-white/40 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white/40 flex flex-col" data-status="Interviewing">
                 <div class="flex justify-between items-center mb-4 px-1">
                     <h3 class="font-bold text-slate-800">💬 Interviewing</h3>
                     <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded-full col-count">0</span>
@@ -65,7 +65,7 @@
             </div>
 
             <!-- Offer Column -->
-            <div class="kanban-column w-80 shrink-0 bg-white/40 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white/40 flex flex-col" data-status="Offer">
+            <div class="kanban-column bg-white/40 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white/40 flex flex-col" data-status="Offer">
                 <div class="flex justify-between items-center mb-4 px-1">
                     <h3 class="font-bold text-slate-800">🎉 Offer</h3>
                     <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded-full col-count">0</span>
@@ -74,7 +74,7 @@
             </div>
 
             <!-- Rejected Column -->
-            <div class="kanban-column w-80 shrink-0 bg-white/40 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white/40 flex flex-col" data-status="Rejected">
+            <div class="kanban-column bg-white/40 backdrop-blur-md rounded-2xl p-4 shadow-sm border border-white/40 flex flex-col" data-status="Rejected">
                 <div class="flex justify-between items-center mb-4 px-1">
                     <h3 class="font-bold text-slate-800">❌ Rejected</h3>
                     <span class="bg-rose-100 text-rose-800 text-xs font-bold px-2 py-1 rounded-full col-count">0</span>

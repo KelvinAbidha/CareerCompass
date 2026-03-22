@@ -3,3 +3,5 @@ firebase-config.js
 .env
 career_compass.db
 career_compass.db
+__pycache__/
+*.py[cod]

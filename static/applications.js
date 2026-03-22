@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     fetchApplications();
+    setupKanbanListeners();
     setupModal();
     setupDragAndDrop();
 });
@@ -63,17 +64,22 @@ function renderKanban() {
     });
 
     if (window.lucide) lucide.createIcons();
+}
 
-    // Event Delegation for Edit/Delete
+function setupKanbanListeners() {
+    // Event Delegation for Edit/Delete attached exactly ONCE to the container columns
     document.querySelectorAll('.kanban-cards').forEach(col => {
         col.addEventListener('click', async (e) => {
-            if (e.target.classList.contains('delete-btn')) {
+            const deleteBtn = e.target.closest('.delete-btn');
+            const editBtn = e.target.closest('.edit-btn');
+            
+            if (deleteBtn) {
                 if(confirm('Delete application?')){
-                    await fetch(`/api/applications/${e.target.dataset.id}`, { method: 'DELETE' });
+                    await fetch(`/api/applications/${deleteBtn.dataset.id}`, { method: 'DELETE' });
                     fetchApplications();
                 }
-            } else if (e.target.classList.contains('edit-btn')) {
-                openModal(applications.find(a => a.id == e.target.dataset.id));
+            } else if (editBtn) {
+                openModal(applications.find(a => a.id == editBtn.dataset.id));
             }
         });
     });
